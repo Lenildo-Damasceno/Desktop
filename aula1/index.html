@@ -1,12 +1,63 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Meu App Electron</title>
-</head>
+    <style>
+      /* Adicione estilos CSS aqui */
+    </style>
+  </head>
 
-<body>
+  <body>
     <h1>Olá, Mundo!</h1>
-</body>
+    <label for="meuInput">Digite algo:</label>
+    <input type="text" id="meuInput" placeholder="Digite aqui" />
+    <br /><br />
+    <button id="meuBotao" onclick="enviar()">Enviar</button>
+    <div id="resultado" aria-live="polite"></div>
+
+    <h1>Verificar se é Positivo</h1>
+    <label for="meuInput2">Digite um número:</label>
+    <input type="number" id="num" placeholder="Digite aqui" />
+    <br /><br /><br />
+    <button id="meuBotao2" onclick="verificarSinal()">Enviar</button>
+    <div id="resultado2" aria-live="polite"></div>
+
+    <script>
+      function enviar() {
+        const input = document.getElementById("meuInput");
+        const valor = input.value;
+        alert("Você digitou: " + valor);
+        document.getElementById("resultado").innerHTML = `Você digitou: ${valor}`;
+        input.value = "";
+      }
+
+      function verificarSinal() {
+        const inputEl = document.getElementById("num");
+        const raw = inputEl.value;
+        const numero = Number(raw);
+        const resultadoEl = document.getElementById("resultado2");
+
+        if (raw === "") {
+          resultadoEl.innerText = "Digite um número.";
+          return;
+        }
+        if (isNaN(numero)) {
+          resultadoEl.innerText = "Valor inválido.";
+          return;
+        }
+
+        if (numero > 0) {
+          resultadoEl.innerText = "Positivo";
+        } else if (numero < 0) {
+          resultadoEl.innerText = "Negativo";
+        } else {
+          resultadoEl.innerText = "Zero";
+        }
+      }
+      
+    </script>
+  </body>
 </html>
+<!-- Fim do arquivo aula1/index.html -->

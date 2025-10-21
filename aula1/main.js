@@ -1,6 +1,6 @@
 import {app,BrowserWindow} from 'electron';
 
-const criarJanela = () => {
+function criarJanela() {
     const janela = new BrowserWindow({
         width: 800,
         height: 600,
@@ -8,10 +8,14 @@ const criarJanela = () => {
     });
 
     janela.loadFile('index.html');
-};
+}
 
 app.whenReady()
     .then(() => {
         criarJanela();
         console.log('Executando Electron');
-    });
+    })
+    .catch((erro) => {
+        console.error(erro);
+    })
+    
