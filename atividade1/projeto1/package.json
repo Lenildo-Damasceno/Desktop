@@ -1,0 +1,12 @@
+{
+  "name": "projeto1",
+  "version": "1.0.0",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "start": "electron main.js"
+  },
+  "dependencies": {
+    "electron": "^38.3.0"
+  }
+}

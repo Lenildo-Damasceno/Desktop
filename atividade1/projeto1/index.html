@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meu App Electron</title>
+
+    <style>
+      /* Adicione estilos CSS aqui */
+
+      body {
+        background-image: url("https://upload.wikimedia.org/wikipedia/commons/d/d7/Natal_aerea_praia1312_11.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        color: #030303;
+      }
+    </style>
+  </head>
+  <body>
+    <br> <br> <br>
+    <h1>VERIFICADOR DE NÚMEROS</h1>
+
+    <h2>Verificar se é Positivo</h2>
+    <label for="meuInput2">Digite um número:</label>
+    <input type="number" id="num" placeholder="Digite aqui" />
+    <br /><br /><br />
+    <button id="meuBotao2" onclick="verificarSinal()">Enviar</button>
+    <div id="resultado2" aria-live="polite"></div>
+
+    <h2>Verificar se é Par ou Ímpar</h2>
+    <label for="meuInput3">Digite um número:</label>
+    <input type="number" id="num2" placeholder="Digite aqui" />
+    <br /><br /><br />
+    <button id="meuBotao3" onclick="parouimpa()">Enviar</button>
+    <div id="resultado3" aria-live="polite"></div>
+
+    <br /><br />
+
+    <a href="https://www.google.com">Clique aqui para ir ao Google</a>
+
+    <script>
+      function verificarSinal() {
+        const inputEl = document.getElementById("num");
+        const raw = inputEl.value;
+        const numero = Number(raw);
+        const resultadoEl = document.getElementById("resultado2");
+
+        if (raw === "") {
+          resultadoEl.innerText = "Digite um número.";
+          return;
+        }
+        if (isNaN(numero)) {
+          resultadoEl.innerText = "Valor inválido.";
+          return;
+        }
+
+        if (numero > 0) {
+          resultadoEl.innerText = "Positivo";
+        } else if (numero < 0) {
+          resultadoEl.innerText = "Negativo";
+        } else {
+          resultadoEl.innerText = "Zero";
+        }
+      }
+      function parouimpa() {
+        const inputEl = document.getElementById("num2");
+        const raw = inputEl.value;
+        const numero = Number(raw);
+        const resultadoEl = document.getElementById("resultado3");
+
+        if (raw === "") {
+          resultadoEl.innerText = "Digite um número.";
+          return;
+        }
+        if (isNaN(numero)) {
+          resultadoEl.innerText = "Valor inválido.";
+          return;
+        }
+
+        if (numero % 2 === 0) {
+          resultadoEl.innerText = "Par";
+        } else {
+          resultadoEl.innerText = "Ímpar";
+        }
+      }
+    </script>
+  </body>
+</html>
+<!-- Fim do arquivo aula1/index.html -->
