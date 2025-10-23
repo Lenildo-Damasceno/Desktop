@@ -66,22 +66,31 @@ function limparCampos() {
   document.getElementById("num2").value = "";
   document.getElementById("resultado3").innerText = "";
 }
-  function converterTemperatura() {
-        var input = document.getElementById('Ncelcius');
-        var c = parseFloat(input.value);
-        if (isNaN(c)) {
-          document.getElementById('kelvin').textContent = 'Por favor, insira um número válido.';
-          document.getElementById('fahrenheit').textContent = '';
-          return;
-        }
-        var k = c + 273.15;
-        var f = (c * 9/5) + 32;
-        document.getElementById('kelvin').textContent = 'Kelvin: ' + k.toFixed(2);
-        document.getElementById('fahrenheit').textContent = 'Fahrenheit: ' + f.toFixed(2);
-      }
-      function limparCampos() {
-        document.getElementById('Ncelcius').value = '';
-        document.getElementById('kelvin').textContent = '';
-        document.getElementById('fahrenheit').textContent = '';
-      }
+function converterTemperatura() {
+  const inputEl = document.getElementById('Ncelcius');
+  const kelvinEl = document.getElementById('kelvin');
+  const fahrenheitEl = document.getElementById('fahrenheit');
+
+  const raw = inputEl.value.trim();
+  const c = Number(raw);
+
+  if (raw === '' || Number.isNaN(c)) {
+    kelvinEl.textContent = 'Por favor, insira um número válido.';
+    fahrenheitEl.textContent = '';
+    return;
+  }
+
+  const k = c + 273.15;
+  const f = (c * 9) / 5 + 32;
+
+  kelvinEl.textContent = `Kelvin: ${k.toFixed(2)}`;
+  fahrenheitEl.textContent = `Fahrenheit: ${f.toFixed(2)}`;
+}
+
+function limparCampos() {
+  const inputEl = document.getElementById('Ncelcius');
+  inputEl.value = '';
+  document.getElementById('kelvin').textContent = '';
+  document.getElementById('fahrenheit').textContent = '';
+}
 
