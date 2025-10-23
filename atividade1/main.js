@@ -6,7 +6,7 @@ function criarJanela() {
     height: 600,
   });
 
-  janela.loadFile('index.html');
+  janela.loadFile('resposta1.html');
 }
 
 app.whenReady()
