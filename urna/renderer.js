@@ -1,0 +1,208 @@
+// Aguarda o carregamento completo do DOM
+document.addEventListener('DOMContentLoaded', () => {
+  // "Banco de dados" simples de candidatos
+  // Em um app real, isso viria de um servidor ou arquivo
+  // Adicione caminhos para as imagens em /images/
+  const candidates = {
+    '13': {
+      name: 'Lula',
+      party: 'PT',
+      photo: '../images/lula.jpg', // Crie a pasta /images e coloque a foto
+    },
+    '22': {
+      name: 'Bolsonaro',
+      party: 'PL',
+      photo: '../images/bolsonaro.jpg', // Crie a pasta /images e coloque a foto
+    },
+    '50': {
+      name: 'Candidato Teste',
+      party: 'PSOL',
+      photo: '', // Sem foto
+    },
+  };
+
+  // Referências aos elementos do DOM
+  const numericKeys = document.querySelectorAll('.numeric-keys .key-btn');
+  const btnBranco = document.getElementById('btn-branco');
+  const btnCorrige = document.getElementById('btn-corrige');
+  const btnConfirma = document.getElementById('btn-confirma');
+
+  const num1 = document.getElementById('num-1');
+  const num2 = document.getElementById('num-2');
+
+  const screens = {
+    initial: document.getElementById('initial-screen'),
+    candidate: document.getElementById('candidate-screen'),
+    blank: document.getElementById('blank-screen'),
+    nulled: document.getElementById('null-screen'),
+    end: document.getElementById('end-screen'),
+  };
+
+  const candidateInfo = {
+    name: document.getElementById('candidate-name'),
+    party: document.getElementById('candidate-party'),
+    photo: document.getElementById('candidate-photo'),
+  };
+
+  // Variáveis de estado
+  let currentVote = '';
+  const VOTE_DIGITS = 2; // Estamos votando para vereador (2 dígitos)
+  let currentState = 'START'; // START, VOTING, BLANK, NULLED, CONFIRMED
+
+  // --- Funções Auxiliares ---
+
+  // Mostra apenas a tela desejada
+  function showScreen(screenName) {
+    // Esconde todas as telas
+    Object.values(screens).forEach((screen) =>
+      screen.classList.remove('active')
+    );
+    // Mostra a tela específica
+    if (screens[screenName]) {
+      screens[screenName].classList.add('active');
+    }
+  }
+
+  // Reseta a urna para o estado inicial
+  function resetUrna() {
+    currentVote = '';
+    currentState = 'START';
+    num1.innerText = '';
+    num2.innerText = '';
+    candidateInfo.name.innerText = '---';
+    candidateInfo.party.innerText = '---';
+    candidateInfo.photo.src = '';
+    candidateInfo.photo.classList.remove('visible');
+    showScreen('initial');
+  }
+
+  // Atualiza a tela do candidato com base no número digitado
+  function updateCandidateScreen() {
+    if (currentVote.length === VOTE_DIGITS) {
+      const candidate = candidates[currentVote];
+
+      if (candidate) {
+        // Candidato encontrado
+        currentState = 'VOTING';
+        candidateInfo.name.innerText = candidate.name;
+        candidateInfo.party.innerText = candidate.party;
+        if (candidate.photo) {
+          candidateInfo.photo.src = candidate.photo;
+          candidateInfo.photo.classList.add('visible');
+        }
+      } else {
+        // Voto Nulo
+        currentState = 'NULLED';
+        candidateInfo.name.innerText = 'VOTO NULO';
+        candidateInfo.party.innerText = 'VOTO NULO';
+        showScreen('nulled'); // Mostra a tela de NULO por cima
+        
+        // HACK: Para mostrar "VOTO NULO" por baixo da sobreposição
+        screens.candidate.classList.add('active'); 
+        num1.innerText = currentVote[0] || '';
+        num2.innerText = currentVote[1] || '';
+      }
+    }
+  }
+
+  // Mostra a tela de FIM e reseta após um tempo
+  function finishVote() {
+    currentState = 'CONFIRMED';
+    showScreen('end');
+    
+    // Opcional: Tocar o som da urna
+    // new Audio('path/to/fim-sound.mp3').play();
+
+    // Reseta a urna após 3 segundos
+    setTimeout(() => {
+      resetUrna();
+    }, 3000);
+  }
+
+  // --- Handlers de Eventos ---
+
+  // Clique em tecla numérica
+  function handleNumericKeyClick(event) {
+    if (currentState === 'CONFIRMED' || currentState === 'BLANK') return;
+    if (currentVote.length >= VOTE_DIGITS) return;
+
+    const key = event.target.dataset.key;
+    currentVote += key;
+
+    // Mostra a tela do candidato assim que o primeiro número é digitado
+    if (currentState === 'START') {
+      showScreen('candidate');
+      currentState = 'VOTING';
+    }
+
+    // Atualiza os displays de número
+    num1.innerText = currentVote[0] || '';
+    num2.innerText = currentVote[1] || '';
+
+    // Se completou os dígitos, busca o candidato
+    if (currentVote.length === VOTE_DIGITS) {
+      updateCandidateScreen();
+    }
+  }
+
+  // Clique em BRANCO
+  function handleBrancoClick() {
+    if (currentState === 'START') {
+      currentState = 'BLANK';
+      showScreen('blank');
+    }
+  }
+
+  // Clique em CORRIGE
+  function handleCorrigeClick() {
+    resetUrna();
+  }
+
+  // Clique em CONFIRMA
+  async function handleConfirmaClick() {
+    let voteToConfirm = null;
+
+    if (currentState === 'BLANK') {
+      voteToConfirm = { candidate: 'BRANCO' };
+    } else if (currentState === 'NULLED') {
+      voteToConfirm = { candidate: `NULO (${currentVote})` };
+    } else if (currentState === 'VOTING' && currentVote.length === VOTE_DIGITS) {
+      voteToConfirm = { candidate: currentVote, details: candidates[currentVote] };
+    } else {
+      // Não faz nada se não estiver em um estado válido para confirmar
+      return;
+    }
+
+    // Envia o voto para o Processo Principal (main.js)
+    try {
+      // Usamos a API exposta pelo preload.js
+      const result = await window.electronAPI.confirmVote(voteToConfirm);
+      console.log('Resposta do Main:', result.message);
+
+      // Só finaliza se o main process confirmar
+      if (result.success) {
+        finishVote();
+      } else {
+        alert('Erro ao registrar voto.');
+      }
+    } catch (error) {
+      console.error('Erro ao enviar voto:', error);
+      alert('Erro grave de comunicação com o sistema.');
+    }
+  }
+
+  // --- Adiciona os Event Listeners ---
+
+  // Teclas numéricas
+  numericKeys.forEach((key) => {
+    key.addEventListener('click', handleNumericKeyClick);
+  });
+
+  // Teclas de ação
+  btnBranco.addEventListener('click', handleBrancoClick);
+  btnCorrige.addEventListener('click', handleCorrigeClick);
+  btnConfirma.addEventListener('click', handleConfirmaClick);
+
+  // --- Inicialização ---
+  resetUrna(); // Garante que a urna comece no estado inicial
+});
