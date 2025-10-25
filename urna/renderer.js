@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     blank: document.getElementById('blank-screen'),
     nulled: document.getElementById('null-screen'),
     end: document.getElementById('end-screen'),
+    results: document.getElementById('results-screen'),
   };
 
   const candidateInfo = {
@@ -43,6 +44,12 @@ document.addEventListener('DOMContentLoaded', () => {
     party: document.getElementById('candidate-party'),
     photo: document.getElementById('candidate-photo'),
   };
+
+  // Elementos para resultados
+  const btnResults = document.getElementById('btn-results');
+  const resultsOutput = document.getElementById('results-output');
+  const resultsScreen = document.getElementById('results-screen');
+  const btnCloseResults = document.getElementById('btn-close-results');
 
   // Variáveis de estado
   let currentVote = '';
@@ -209,6 +216,49 @@ document.addEventListener('DOMContentLoaded', () => {
   btnBranco.addEventListener('click', handleBrancoClick);
   btnCorrige.addEventListener('click', handleCorrigeClick);
   btnConfirma.addEventListener('click', handleConfirmaClick);
+  // Botão de resultados
+  if (btnResults) {
+    btnResults.addEventListener('click', async () => {
+      // Verifica API
+      if (!window.electronAPI || typeof window.electronAPI.getResults !== 'function') {
+        alert('Função de resultados não disponível. Abra DevTools e verifique o preload.');
+        return;
+      }
+
+      // Chama getResults e exibe
+      try {
+        const res = await window.electronAPI.getResults();
+        if (res && res.success) {
+          const totals = res.totals || {};
+          const totalVotes = res.totalVotes || 0;
+          // Formata a saída
+          let out = `Total de votos: ${totalVotes}\n\n`;
+          const entries = Object.entries(totals);
+          if (entries.length === 0) out += 'Nenhum voto registrado.';
+          else {
+            entries.forEach(([candidate, count]) => {
+              out += `${candidate}: ${count}\n`;
+            });
+          }
+          resultsOutput.innerText = out;
+          // Mostra sobreposição de resultados
+          showScreen('results');
+        } else {
+          alert('Falha ao obter resultados: ' + (res && res.message));
+        }
+      } catch (err) {
+        console.error('Erro ao obter resultados:', err);
+        alert('Erro ao obter resultados. Veja o console.');
+      }
+    });
+  }
+
+  if (btnCloseResults) {
+    btnCloseResults.addEventListener('click', () => {
+      // Fecha a sobreposição e volta à tela inicial
+      resetUrna();
+    });
+  }
 
   // --- Inicialização ---
   // Diagnóstico: loga se a API exposta pelo preload está disponível

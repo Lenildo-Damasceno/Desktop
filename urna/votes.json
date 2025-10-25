@@ -21,5 +21,14 @@
       "photo": "../images/bolsonaro.jpg"
     },
     "time": "2025-10-25T13:47:46.411Z"
+  },
+  {
+    "candidate": "13",
+    "details": {
+      "name": "Lula",
+      "party": "PT",
+      "photo": "../images/lula.jpg"
+    },
+    "time": "2025-10-25T13:58:07.594Z"
   }
 ]
