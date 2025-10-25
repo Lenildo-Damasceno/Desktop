@@ -174,21 +174,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Envia o voto para o Processo Principal (main.js)
-    try {
-      // Usamos a API exposta pelo preload.js
-      const result = await window.electronAPI.confirmVote(voteToConfirm);
-      console.log('Resposta do Main:', result.message);
-
-      // Só finaliza se o main process confirmar
-      if (result.success) {
-        finishVote();
-      } else {
-        alert('Erro ao registrar voto.');
+      // Verifica se a API do preload está disponível
+      if (!window.electronAPI || typeof window.electronAPI.confirmVote !== 'function') {
+        console.error('electronAPI não está disponível no renderer', window.electronAPI);
+        alert('Erro de comunicação: a ponte com o sistema não está disponível. Verifique se o app foi iniciado via Electron e se o preload foi carregado (Abra DevTools - Console para mais detalhes).');
+        return;
       }
-    } catch (error) {
-      console.error('Erro ao enviar voto:', error);
-      alert('Erro grave de comunicação com o sistema.');
-    }
+
+      try {
+        // Usamos a API exposta pelo preload.js
+        const result = await window.electronAPI.confirmVote(voteToConfirm);
+        console.log('Resposta do Main:', result.message);
+
+        // Só finaliza se o main process confirmar
+        if (result.success) {
+          finishVote();
+        } else {
+          alert('Erro ao registrar voto: ' + (result.message || 'erro desconhecido'));
+        }
+      } catch (error) {
+        console.error('Erro ao enviar voto:', error);
+        alert('Erro grave de comunicação com o sistema. Veja o console do DevTools para detalhes.');
+      }
   }
 
   // --- Adiciona os Event Listeners ---
@@ -204,5 +211,16 @@ document.addEventListener('DOMContentLoaded', () => {
   btnConfirma.addEventListener('click', handleConfirmaClick);
 
   // --- Inicialização ---
+  // Diagnóstico: loga se a API exposta pelo preload está disponível
+  try {
+    // eslint-disable-next-line no-console
+    console.log('Diagnóstico renderer: window.electronAPI =>', typeof window.electronAPI);
+    if (window.electronAPI) {
+      console.log('Diagnóstico renderer: electronAPI keys =>', Object.keys(window.electronAPI));
+    }
+  } catch (e) {
+    // ignore
+  }
+
   resetUrna(); // Garante que a urna comece no estado inicial
 });

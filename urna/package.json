@@ -2,6 +2,7 @@
   "name": "urna-electron",
   "version": "1.0.0",
   "description": "Simulador de urna eletrônica com Electron",
+  "type": "module",
   "main": "main.js",
   "scripts": {
     "start": "electron ."

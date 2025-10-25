@@ -1,0 +1,25 @@
+[
+  {
+    "candidate": "13",
+    "details": {
+      "name": "Lula",
+      "party": "PT",
+      "photo": "../images/lula.jpg"
+    },
+    "time": "2025-10-25T13:47:29.995Z"
+  },
+  {
+    "candidate": "NULO (17)",
+    "details": null,
+    "time": "2025-10-25T13:47:38.101Z"
+  },
+  {
+    "candidate": "22",
+    "details": {
+      "name": "Bolsonaro",
+      "party": "PL",
+      "photo": "../images/bolsonaro.jpg"
+    },
+    "time": "2025-10-25T13:47:46.411Z"
+  }
+]
