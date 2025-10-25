@@ -186,6 +186,42 @@ function limparCampos() {
   const inputEl = document.getElementById('Ncelcius');
   inputEl.value = '';
   document.getElementById('kelvin').textContent = '';
-  document.getElementById('fahrenheit').textContent = '';
+  document.getElementById('fahrenheit').textContent = ''
 }
+function converterDolar() {
+  const valorEmReais = Number(document.getElementById("valor").value)
+  const taxaDeConversao = 5.424 
+  const valorEmDolares = valorEmReais / taxaDeConversao
+  document.getElementById("resultado").innerText = "Valor em Dólares: " + valorEmDolares.toFixed(2);
+}
+function converterEuro() {
+  const valorEmReais = Number(document.getElementById("valor").value)
+  const taxaDeConversao = 6.353 
+  const valorEmEuro = valorEmReais / taxaDeConversao
+  document.getElementById("resultado").innerText = "Valor em Euro: " + valorEmEuro.toFixed(2);
+}
+function converterPeso(){
+  const valorEmReais=Number(document.getElementById("valor").value)
+  const taxaDeConversao = 0.0042
+  const valorEmPeso = valorEmReais / taxaDeConversao
+  document.getElementById("resultado").innerText = "Valor em Peso:" + valorEmPeso.toFixed(2)
+}
+
+function converterLibra(){
+  const valorEmReais=Number(document.getElementById("valor").value)
+  const taxaDeConversao = 7.326
+  const valorEmLibra = valorEmReais / taxaDeConversao
+  document.getElementById("resultado").innerText = "Valor em Libra:" + valorEmLibra.toFixed(2)
+}
+function converterFranco(){
+  const valorEmReais=Number(document.getElementById("valor").value)
+  const taxaDeConversao = 6.753
+  const valorEmfranco = valorEmReais / taxaDeConversao
+  document.getElementById("resultado").innerText = "Valor em Libra:" + valorEmfranco.toFixed(2)
+}
+function limparCampos() {
+  document.getElementById("valor").value = "";
+  document.getElementById("resultado").innerText = "";
+}
+
 
