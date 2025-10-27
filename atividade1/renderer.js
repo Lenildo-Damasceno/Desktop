@@ -165,18 +165,23 @@ function limparCampos() {
            
             let soma = n1 + n2 + n3 + n4;
             let media = soma / 4;
-
-            document.getElementById("resultado").textContent = "A média final é: " + media.toFixed(2)
+            if (isNaN(media)) {
+              document.getElementById("resultado").textContent = "A média final é: " + media.toFixed(2)
+            } else if (media < 6) {
+              document.getElementById("resultado").textContent = "Reprovado sua nota é: " + media.toFixed(2)
+            } else {
+              document.getElementById("resultado").textContent = "Aprovado sua nota é: " + media.toFixed(2)
+            }
         });
 
 
         
-function converterCelsiusParaFahrenheit(celsius) {
-  let fahrenheit = (celsius * 9) / 5 + 32;
-  return fahrenheit;
-}
-function converterCelsiusParaKelvin(celsius) {
-  let kelvin = celsius + 273.15;
+        function converterCelsiusParaFahrenheit(celsius) {
+          let fahrenheit = (celsius * 9) / 5 + 32;
+          return fahrenheit;
+        }
+        function converterCelsiusParaKelvin(celsius) {
+          let kelvin = celsius + 273.15;
   return kelvin;
 }
 
