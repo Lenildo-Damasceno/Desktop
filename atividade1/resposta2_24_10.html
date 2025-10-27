@@ -9,51 +9,40 @@
     <h2>Calculadora de Média</h2>
     <p>Digite as 4 notas nos campos abaixo e clique em calcular.</p>
 
-    <div>
+
         <label for="nota1">Nota 1:</label>
         <input type="number" id="nota1" placeholder="Digite a nota 1">
-    </div>
-
-    <div>
+    
         <label for="nota2">Nota 2:</label>
         <input type="number" id="nota2" placeholder="Digite a nota 2">
-    </div>
-
-    <div>
+   
         <label for="nota3">Nota 3:</label>
         <input type="number" id="nota3" placeholder="Digite a nota 3">
-    </div>
 
-    <div>
         <label for="nota4">Nota 4:</label>
         <input type="number" id="nota4" placeholder="Digite a nota 4">
-    </div>
+  
 
     <button id="btnCalcular">Calcular Média</button>
-
+  <br><br>
     <h3 id="resultado"></h3>
-
+    <a href="resposta2.html"<button>CALCULE A MEDIA PONDERADA</button></a>
 
     <script>
-        // 1. "Ouvir" pelo clique no botão
-        //    Buscamos o botão pelo ID dele
+      
         document.getElementById("btnCalcular").addEventListener("click", function() {
             
-            // 2. Quando o botão for clicado, buscar o VALOR de CADA input
-            //    Usamos parseFloat() para garantir que o texto (string) vira um número
-            let n1 = parseFloat(document.getElementById("nota1").value);
-            let n2 = parseFloat(document.getElementById("nota2").value);
-            let n3 = parseFloat(document.getElementById("nota3").value);
-            let n4 = parseFloat(document.getElementById("nota4").value);
+          
+            let n1 = parseFloat(document.getElementById("nota1").value)
+            let n2 = parseFloat(document.getElementById("nota2").value)
+            let n3 = parseFloat(document.getElementById("nota3").value)
+            let n4 = parseFloat(document.getElementById("nota4").value)
 
-            // 3. Calcular a soma e a média
+           
             let soma = n1 + n2 + n3 + n4;
             let media = soma / 4;
 
-            // 4. Mostrar o resultado na tela
-            //    Buscamos o h3 pelo ID e mudamos o texto dele
-            //    .toFixed(2) é opcional, mas formata a média para 2 casas decimais
-            document.getElementById("resultado").textContent = "A média final é: " + media.toFixed(2);
+            document.getElementById("resultado").textContent = "A média final é: " + media.toFixed(2)
         });
     </script>
 
