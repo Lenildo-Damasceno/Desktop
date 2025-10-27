@@ -41,22 +41,7 @@ function parouimpa() {
   resultadoEl.innerText = numero % 2 === 0 ? "Par" : "Ímpar";
 }
 
-function calcularMediaPonderada() {
-  const atividade = parseFloat(document.getElementById("num").value);
-  const prova = parseFloat(document.getElementById("num2").value);
-  const resultadoEl = document.getElementById("resultado3");
 
-  if (isNaN(atividade) || isNaN(prova)) {
-    resultadoEl.innerText =
-      "Por favor insira notas válidas para atividade e prova.";
-    return;
-  }
-
-  const parte1 = atividade * 0.4;
-  const parte2 = prova * 0.6;
-  const mediaFinal = parte1 + parte2;
-  resultadoEl.innerText = "Média ponderada: " + mediaFinal.toFixed(2);
-}
 
 function limparCampos() {
   document.getElementById("num").value = "";
@@ -73,7 +58,6 @@ function celsiusToFahrenheit(celsius) {
   return (celsius * 9) / 5 + 32;
 }
 
-// Wrappers para UI — mostram somente uma conversão
 function mostrarKelvin() {
   const inputEl = document.getElementById('Ncelcius');
   const kelvinEl = document.getElementById('kelvin');
@@ -148,30 +132,45 @@ function parouimpa() {
     resultadoEl.innerText = "Ímpar";
   }
 }
-function calcularMediaPonderada() {
-  const atividade = parseFloat(document.getElementById("num").value);
-  const prova = parseFloat(document.getElementById("num2").value);
-  const resultadoEl = document.getElementById("resultado3");
+ function calcularMediaPonderada() {
+      const num1 = parseFloat(document.getElementById('num').value)
+      const num2 = parseFloat(document.getElementById('num2').value)
+      const resultadoEl = document.getElementById('resultadoEl')
 
-  if (isNaN(atividade) || isNaN(prova)) {
-    resultadoEl.innerText =
-      "Por favor insira notas válidas para atividade e prova.";
-    return;
-  }
-
-  const parte1 = atividade * 0.4;
-  const parte2 = prova * 0.6;
-
-  const mediaFinal = parte1 + parte2;
-
-  resultadoEl.innerText = "Média ponderada: " + mediaFinal.toFixed(2);
-}
-
+    
+      if (isNaN(num1) || isNaN(num2)) {
+        resultadoEl.textContent = 'Por favor, insira as duas notas.'
+        return;
+      }
+      const pesoAtividade = 0.4
+      const pesoProva = 0.6
+      const mediaPonderada = (num1 * pesoAtividade + num2 * pesoProva) / (pesoAtividade + pesoProva)
+      resultadoEl.textContent = `Sua média ponderada é: ${mediaPonderada.toFixed(2)}`
+    }
 function limparCampos() {
-  document.getElementById("num").value = "";
-  document.getElementById("num2").value = "";
-  document.getElementById("resultado3").innerText = "";
+  document.getElementById("n1").value = ""
+  document.getElementById("n2").value = ""
+  document.getElementById("resultado").innerText = ""
 }
+
+
+        document.getElementById("btnCalcular").addEventListener("click", function() {
+
+
+            let n1 = parseFloat(document.getElementById("nota1").value)
+            let n2 = parseFloat(document.getElementById("nota2").value)
+            let n3 = parseFloat(document.getElementById("nota3").value)
+            let n4 = parseFloat(document.getElementById("nota4").value)
+
+           
+            let soma = n1 + n2 + n3 + n4;
+            let media = soma / 4;
+
+            document.getElementById("resultado").textContent = "A média final é: " + media.toFixed(2)
+        });
+
+
+        
 function converterCelsiusParaFahrenheit(celsius) {
   let fahrenheit = (celsius * 9) / 5 + 32;
   return fahrenheit;

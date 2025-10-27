@@ -5,12 +5,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Adicione caminhos para as imagens em /images/
   const candidates = {
     '13': {
-      name: 'Lula',
+      name: 'EMANUEL',
       party: 'PT',
       photo: '../images/lula.jpg', // Crie a pasta /images e coloque a foto
     },
     '22': {
-      name: 'Bolsonaro',
+      name: 'LENILDO',
       party: 'PL',
       photo: '../images/bolsonaro.jpg', // Crie a pasta /images e coloque a foto
     },

@@ -25,26 +25,11 @@
 
     <button id="btnCalcular">Calcular Média</button>
   <br><br>
-    <h3 id="resultado"></h3>
-    <a href="resposta2.html"<button>CALCULE A MEDIA PONDERADA</button></a>
+    <p id="resultado"></p>
 
-    <script>
-      
-        document.getElementById("btnCalcular").addEventListener("click", function() {
-            
-          
-            let n1 = parseFloat(document.getElementById("nota1").value)
-            let n2 = parseFloat(document.getElementById("nota2").value)
-            let n3 = parseFloat(document.getElementById("nota3").value)
-            let n4 = parseFloat(document.getElementById("nota4").value)
+    <a href="resposta2.html"><button>CALCULE A MEDIA PONDERADA</button></a>
 
-           
-            let soma = n1 + n2 + n3 + n4;
-            let media = soma / 4;
-
-            document.getElementById("resultado").textContent = "A média final é: " + media.toFixed(2)
-        });
-    </script>
+    <script src="renderer.js"></script>
 
 </body>
 </html>
