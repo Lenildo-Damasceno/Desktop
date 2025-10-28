@@ -1,3 +1,10 @@
+console.log(`$process.platform: ${process.platform}`);
+console.log(`$process.version.electron ${window.api.version}`);
+console.log(`$process.versions.chrome: ${window.api.versions.chrome}`);
+console.log(`$process.versions.node: ${window.api.versions.node}`);
+
+
+
 // Funções de verificação
 function verificarSinal() {
   const inputEl = document.getElementById("num");
