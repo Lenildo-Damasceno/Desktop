@@ -164,7 +164,7 @@ body {
   height: 50px;
   font-size: 20px;
   font-weight: bold;
-  color: white;
+  color: rgb(240, 240, 240);
   background-color: #333;
   border: 1px solid #222;
   cursor: pointer;

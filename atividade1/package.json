@@ -4,8 +4,11 @@
   "main": "main.js",
   "type": "module",
   "scripts": {
-    "start": "electron ."
+    "start": "electron main.js"
   },
+  "keywords": [],
+  "author": "lenildo",
+  "license": "ISC",
   "dependencies": {
     "electron": "^38.3.0"
   }

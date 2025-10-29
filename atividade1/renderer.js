@@ -1,9 +1,9 @@
-console.log(`$process.platform: ${process.platform}`);
-console.log(`$process.version.electron ${window.api.version}`);
-console.log(`$process.versions.chrome: ${window.api.versions.chrome}`);
-console.log(`$process.versions.node: ${window.api.versions.node}`);
-
-
+// console.log(`$process.platform: ${process.platform}`);
+// console.log(`$process.version.electron ${window.api.version}`);
+// console.log(`$process.versions.node: ${window.api.versions.node}`);
+console.log(`$window.api.versionNode: ${window.api.versaoNode()}`);
+console.log(`$window.api.versionElectron: ${window.api.versaoElectron()}`);
+console.log(`$window.api.nome: ${window.api.nome}`);
 
 // Funções de verificação
 function verificarSinal() {
