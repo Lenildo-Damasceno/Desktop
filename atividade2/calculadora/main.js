@@ -23,7 +23,7 @@ function criarJanela() { // Função para criar a janela principal
     },
   });
   janela.removeMenu(); // Remove o menu padrão do Electron
-  janela.loadFile('resposta1_24_10.html'); // Carrega o arquivo HTML na janela ou uma pagina 
+  janela.loadFile('index.html'); // Carrega o arquivo HTML na janela ou uma pagina 
   janela.webContents.openDevTools(); // Abre as ferramentas de desenvolvedor
 }
 
