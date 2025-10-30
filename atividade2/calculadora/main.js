@@ -13,7 +13,7 @@ function criarJanela() { // Função para criar a janela principal
     width: 800,
     height: 600,
     resizable: false, //tamanho fixo
-    fullscreen: true,  //tela cheia ativada
+    fullscreen: false,  //tela cheia ativada
     icon: 'iconemoeda.png', // Caminho para o ícone da aplicação
       webPreferences: {
       contextIsolation: false, // Desativa a isolamento de contexto

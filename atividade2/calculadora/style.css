@@ -1,0 +1,86 @@
+
+body {
+  background:#eef2f7;
+  font-family: Arial, Helvetica, sans-serif;
+  margin:0;
+  padding:0;
+}
+
+.fundo {
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  min-height:100vh;
+  padding:32px 12px;
+  box-sizing:border-box;
+}
+
+.Calculadora {
+  width:340px;
+  background:#ffffff;
+  padding:18px;
+  border-radius:10px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+  text-align:center;
+}
+
+.Calculadora h1 {
+  margin:0 0 12px 0;
+  font-size:20px;
+}
+
+#visor {
+  width:100%;
+  height:46px;
+  font-size:20px;
+  padding:8px;
+  box-sizing:border-box;
+  text-align:right;
+  margin-bottom:12px;
+  border:1px solid #ddd;
+  border-radius:6px;
+  background:#f9f9fb;
+}
+
+
+.pad {
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:10px;
+}
+
+
+button {
+  padding:12px 8px;
+  font-size:18px;
+  border-radius:8px;
+  border:1px solid #d0d6dd;
+  background:#fff;
+  cursor:pointer;
+  user-select:none;
+}
+
+
+#limpar {
+  grid-column: 1 / -1;
+  background:#ff6b6b;
+  color:#fff;
+  font-weight:700;
+}
+
+
+#igual {
+  background: linear-gradient(180deg,#4caf50,#3a9d3a);
+  color:#fff;
+  font-weight:700;
+}
+
+
+#back {
+  background: linear-gradient(180deg,#ff9a3c,#e07b2f);
+}
+
+/*
+ garantir que botões preencham o espaço
+*/
+.pad button { width:100%; height:52px; }
