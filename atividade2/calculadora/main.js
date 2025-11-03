@@ -27,7 +27,6 @@ function criarJanela() { // Função para criar a janela principal
   janela.webContents.openDevTools(); // Abre as ferramentas de desenvolvedor
 }
 
-
 //janela.loadURL('https://www.example.com'); // Carrega uma URL externa na janela
 
 app.whenReady() // Quando o aplicativo estiver pronto

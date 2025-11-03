@@ -4,7 +4,7 @@
   "main": "main.js",
   "type": "module",
   "scripts": {
-    "start": "electronmon main.js"
+    "start": "electron main.js"
   },
   "keywords": [],
   "author": "lenildo",
@@ -13,6 +13,6 @@
     "electron": "^39.0.0"
   },
   "dependencies": {
-    "electronmon": "^2.0.4"
+    "electron": "^2.0.4"
   }
 }
