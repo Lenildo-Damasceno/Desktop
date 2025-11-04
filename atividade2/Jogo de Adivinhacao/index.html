@@ -24,64 +24,7 @@
     </div>
 </body>
 </html>
-<script>
-let adivinhar = Math.trunc(Math.random() * 15) + 1;
-let tentativas = 0;
 
-document.getElementById('adivinhar').addEventListener('click', function() {
-    let num = Number(document.getElementById('numero').value);
-    tentativas++;
-    const resultadoEl = document.getElementById('resultado');
-
-
-    if ( num < 1 || num > 15) {
-        resultadoEl.innerHTML = 'Digite um número entre 1 e 15.';
-       return; 
-        if (botao.id === 'adivinhar'){
-        document.getElementById('dica').style.visibility= 'visible'
-    }
-    }
-    
-    if (num === adivinhar) {
-        resultadoEl.innerHTML = 'Acertou! Tentativas: ' + tentativas;
-         adivinhar = Math.trunc(Math.random() * 15) + 1;
-         tentativas = 0;
-        
-    } else{
-        resultadoEl.innerHTML = 'ERROU'
-        document.getElementById('dica').style.visibility= 'visible'
-    
-    }
-   
-  
-});
- 
-function dica (){
-    let num = Number(document.getElementById('numero').value);
-    const resultadoEl = document.getElementById('resultado');
-    if (num < adivinhar) {
-        resultadoEl.innerHTML = 'Errou! O número é maior.';
-    } else {
-        resultadoEl.innerHTML = 'Errou! O número é menor.';
-    }
-}
-
-function limparCampos(limpar) {
-  document.getElementById("numero").value = "VAMOS DE NOVO";
- document.getElementById('resultado').innerHTML = ""
-}
-
-function mudarTema() {
-    const body = document.body;
-    if (body.classList.contains('light-theme')) {
-        body.classList.remove('light-theme');
-        body.classList.add('dark-theme');
-    } else {
-        body.classList.remove('dark-theme');
-        body.classList.add('light-theme');
-    }
-}
-</script>
 <script src="renderer.js"></script>
 
 </body>
