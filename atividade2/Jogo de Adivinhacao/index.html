@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adivinhação</title>
-
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-
-    <h1>Adivinhação</h1>
-    <p>Tente adivinhar o número entre 1 e 15!</p>
+    <h1 style="text-align: center; color: blue;">Adivinhação</h1>
+    <p style="text-align: center; color: blue;"> Tente adivinhar o número entre 1 e 15!</p>
     <input type="number" id="numero" min="1" max="15">
     <button id="adivinhar">Adivinhar</button>
     <button id="limpar" onclick= limparCampos()>Limpar</button>
@@ -19,8 +18,8 @@
     <br><br><br>
     <button id="mudarTema" onclick="mudarTema()">Mudar Tema</button>
     <div id="zoom">
-        <button id="zoom" onclick="zoom('+')">Zoom + </button>
-        <button id="zoom" onclick="zoom('-')">Zoom - </button>
+        <button id="zoom+" onclick="mudarZoom()">Zoom + </button>
+        <button id="zoom-" onclick="mudarZoomMenos()">Zoom - </button>
     </div>
 </body>
 </html>

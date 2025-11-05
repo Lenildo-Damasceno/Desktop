@@ -1,0 +1,69 @@
+/* Ajustes para empilhar botões, aumentar área de mensagem e separar o parágrafo instrucional */
+/* Cole no final do seu style.css (substitui regras conflitantes) */
+
+h1 + p {
+  margin-bottom: 20px; /* separa o parágrafo de instrução do restante */
+}
+.titulo {
+  text-align: center;
+  margin-bottom: 20px;
+  
+}
+#numero {
+  display: block;
+  margin: 8px auto 14px auto;
+  width: 260px;
+  padding: 10px;
+  font-size: 18px;
+  text-align: center;
+}
+
+/* empilha todos os botões verticalmente e centraliza */
+#adivinhar,
+#limpar,
+#dica,
+#mudarTema,
+#zoom button {
+  display: block;
+  width: 260px;
+  margin: 8px auto;
+  padding: 10px 14px;
+  box-sizing: border-box;
+}
+
+/* garante que os botões dentro da div #zoom também fiquem um abaixo do outro */
+#zoom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* aumenta a área da mensagem de resultado */
+#resultado {
+  min-height: 120px;
+  max-width: 720px;
+  width: 80%;
+  margin: 16px auto;
+  padding: 14px;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 18px;
+  background: rgba(255,255,255,0.8);
+  box-shadow: 0 6px 16px rgba(2,48,71,0.05);
+}
+
+/* pequenos toques visuais */
+button { cursor: pointer; border-radius: 8px; }
+#limpar { background:#ff6b6b; color:#fff; }
+#adivinhar { background: linear-gradient(180deg,#4caf50,#2e7d32); color:#fff; }
+#dica { background:#7bd389; color:#053; }
+
+/* responsivo para janelas menores */
+@media (max-width:480px){
+  #numero, #adivinhar, #limpar, #dica, #mudarTema, #zoom button {
+    width: 90%;
+  }
+  #resultado { min-height: 100px; font-size: 16px; }
+}

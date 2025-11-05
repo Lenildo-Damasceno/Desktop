@@ -8,6 +8,7 @@ contextBridge.exposeInMainWorld('api', {
 
     tema: () => { ipcRenderer.send('mudar-tema') },
     zoom: () => {ipcRenderer.send('mudar-zoom') },
+    zoomM: () => {ipcRenderer.send('mudar-zoom-') },
     criarJanela: () => { ipcRenderer.send('criar-janela') },
 
     enviarMsg: (msg) => ipcRenderer.send('envia-msg',msg),

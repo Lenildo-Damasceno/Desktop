@@ -46,9 +46,11 @@ ipcMain.on('mudar-tema', () => { //recebe o evento do renderer para mudar o tema
 ipcMain.on('mudar-zoom', () => { //recebe o evento do renderer para aumentar o zoom
     let janelaatual = janela.webContents.getZoomFactor()
     janela.webContents.setZoomFactor(0.1 + janelaatual)
-    
 })
-
+ipcMain.on('mudar-zoom-', () => { //recebe o evento do renderer para diminuir o zoom
+    let janelaatual = janela.webContents.getZoomFactor()
+    janela.webContents.setZoomFactor(janelaatual - 0.1)
+})
 ipcMain.on('criar-janela', () => { //recebe o evento do renderer para criar uma nova janela
     criarJanela()
 })

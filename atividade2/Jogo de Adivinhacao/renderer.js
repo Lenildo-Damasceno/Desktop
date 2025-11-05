@@ -6,7 +6,9 @@ function mudarTema() {
 function mudarZoom() {
         window.api.zoom()
 }
-
+function mudarZoomMenos() {
+        window.api.zoomM()
+}
 function criarJanela() {
         window.api.criarJanela()
 }
