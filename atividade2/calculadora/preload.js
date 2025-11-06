@@ -6,4 +6,3 @@ contextBridge.exposeInMainWorld('api', {
   versaoNode: () => { return `NODE - ${process.versions.node}`; },
   versaoElectron: () => { return `ELECTRON - ${process.versions.electron}`; }
 });
- 

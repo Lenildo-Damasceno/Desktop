@@ -1,4 +1,5 @@
 
+// Funções de interação com a main process      
 function mudarTema() {
         window.api.tema()
 }
@@ -13,20 +14,20 @@ function criarJanela() {
         window.api.criarJanela()
 }
 
+
+// Lógica do Jogo de Adivinhação
+
 document.getElementById('adivinhar').addEventListener('click', function() {
     let num = Number(document.getElementById('numero').value);
     const resultadoEl = document.getElementById('resultado');
     window.api.verificar(num, resultadoEl);
 })
- 
+
 function dica (){
+   
     let num = Number(document.getElementById('numero').value);
     const resultadoEl = document.getElementById('resultado');
-    if (num < adivinhar) {
-        resultadoEl.innerHTML = 'Errou! O número é maior.';
-    } else {
-        resultadoEl.innerHTML = 'Errou! O número é menor.';
-    }
+    window.api.dica1(num, resultadoEl);
 }
 
 function limparCampos(limpar) {
