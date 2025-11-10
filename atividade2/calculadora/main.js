@@ -1,4 +1,4 @@
-import { app, BrowserWindow,nativeTheme } from 'electron';
+import { app, BrowserWindow, nativeTheme, ipcMain } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -6,6 +6,19 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 console.log(__dirname);
 
+// histórico guardado em memória no processo principal
+const historicoCalculos = [];
+
+// Handlers IPC em português
+ipcMain.handle('adicionar-historico', (evento, calculo) => {
+  console.log('Adicionando ao histórico:', calculo);
+  historicoCalculos.push(calculo);
+  return historicoCalculos; // retorna histórico atualizado opcionalmente
+});
+
+ipcMain.handle('obter-historico', () => {
+  return historicoCalculos;
+});
 
 function criarJanela() { // Função para criar a janela principal
   nativeTheme.themeSource = 'dark'; // Define o tema escuro
@@ -18,13 +31,13 @@ function criarJanela() { // Função para criar a janela principal
       webPreferences: {
       contextIsolation: false, // Desativa a isolamento de contexto
       nodeIntegration: true,  // Habilita a integração do Node.js
-      devTools: false, // Habilita as ferramentas de desenvolvedor
+      devTools: true, // Habilita as ferramentas de desenvolvedor
       preload: path.join(__dirname, 'preload.js') // Carrega o script de preload
     },
   });
   janela.removeMenu(); // Remove o menu padrão do Electron
   janela.loadFile('index.html'); // Carrega o arquivo HTML na janela ou uma pagina 
-  //janela.webContents.openDevTools(); // Abre as ferramentas de desenvolvedor
+  janela.webContents.openDevTools(); // Abre as ferramentas de desenvolvedor
 }
 
 //janela.loadURL('https://www.example.com'); // Carrega uma URL externa na janela
