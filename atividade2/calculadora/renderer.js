@@ -45,3 +45,8 @@ const limparBtn = document.getElementById('limpar')
                 }
             })
         })
+
+        document.getElementById('history-btn').addEventListener('click', () => {
+          window.api.abrirHistorico();
+        });
+        

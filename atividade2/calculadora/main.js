@@ -18,13 +18,13 @@ function criarJanela() { // Função para criar a janela principal
       webPreferences: {
       contextIsolation: false, // Desativa a isolamento de contexto
       nodeIntegration: true,  // Habilita a integração do Node.js
-      devTools: true, // Habilita as ferramentas de desenvolvedor
+      devTools: false, // Habilita as ferramentas de desenvolvedor
       preload: path.join(__dirname, 'preload.js') // Carrega o script de preload
     },
   });
   janela.removeMenu(); // Remove o menu padrão do Electron
   janela.loadFile('index.html'); // Carrega o arquivo HTML na janela ou uma pagina 
-  janela.webContents.openDevTools(); // Abre as ferramentas de desenvolvedor
+  //janela.webContents.openDevTools(); // Abre as ferramentas de desenvolvedor
 }
 
 //janela.loadURL('https://www.example.com'); // Carrega uma URL externa na janela
@@ -37,3 +37,25 @@ app.whenReady() // Quando o aplicativo estiver pronto
   .catch((erro) => {  // Tratamento de erros
     console.error(erro);
   });
+
+app.on('window-all-closed', () => { // Fecha o aplicativo quando todas as janelas forem fechadas
+  if (process.platform !== 'darwin') {
+    app.quit();
+  } });
+
+app.on('activate', () => { // Recria a janela se o aplicativo for ativado e não houver janelas abertas
+  if (BrowserWindow.getAllWindows().length === 0) {
+    criarJanela();
+  }
+});
+
+historicodacalculadora = [];
+
+export { historicodacalculadora };
+import { historicodacalculadora } from './main.js';
+
+import { ipcMain } from 'electron';
+
+ipcMain.on('history-btn', (event) => {
+  event.reply('history-response', historicodacalculadora);
+});
