@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeTheme, ipcMain, Menu } from "electron";
+import { app, BrowserWindow, nativeTheme, ipcMain, Menu, dialog } from "electron";
 import { fileURLToPath } from "url";
 import path from "path";
 
@@ -22,13 +22,13 @@ function criarJanela() {
       setZoomFactor: 1.0, //deixando o zoom em 100%
     },
   });
-  janela.removeMenu();
+  // Não remover o menu para que o item "Ajuda" apareça
   janela.loadFile(path.join(__dirname, "index.html"));
   janela.webContents.on("did-finish-load", () => {
     //evento disparado quando a janela termina de carregar
     janela.webContents.setZoomFactor(1.0);
+    
   });
-  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
 const template = [
@@ -44,21 +44,21 @@ const template = [
     label: "Exibir",
     submenu: [
       {
-        label: "Zoom +",
-        accelerator: "CmdOrCtrl+=",
-        click: () =>
-          janela.webContents.setZoomFactor(
-            janela.webContents.getZoomFactor() + 0.1
-          ),
+        label: "Zoom",
+        submenu: [
+          { label: "Aumentar", role: "zoomIn", accelerator: "CmdOrCtrl+=" },
+          { label: "Aumentar (alt)", role: "zoomIn", accelerator: "CmdOrCtrl+Shift=", visible: false },
+          { label: "Aumentar (Num +)", role: "zoomIn", accelerator: "CmdOrCtrl+numadd", visible: false },
+          { type: "separator" },
+          { label: "Diminuir", role: "zoomOut", accelerator: "CmdOrCtrl+-" },
+          { label: "Diminuir (Num -)", role: "zoomOut", accelerator: "CmdOrCtrl+numsub", visible: false },
+          { type: "separator" },
+          { label: "Resetar Zoom", role: "resetZoom" },
+        ],
       },
-      {
-        label: "Zoom -",
-        accelerator: "CmdOrCtrl+-",
-        click: () =>
-          janela.webContents.setZoomFactor(
-            janela.webContents.getZoomFactor() - 0.1
-          ),
-      },
+      { type: "separator" },
+      { label: "Tela Cheia", role: "togglefullscreen" },
+      { type: "separator" },
       {
         label: "Trocar Tema",
         type: "checkbox",
@@ -73,7 +73,7 @@ const template = [
       },
     ],
   },
-  {
+   {
     label: "Ferramenta",
     submenu: [
       {
@@ -89,14 +89,22 @@ const template = [
     submenu: [
       {
         label: "Sobre o Jogo de Adivinhação",
-        role: "about",
         click: () => {
-          console.log(`Versão do Node: ${process.versions.node}`);
+          if (janela) {
+            dialog.showMessageBox(janela, {
+              type: "info",
+              title: "Sobre o Jogo de Adivinhação",
+              message: `Versões:\nApp: ${app.getVersion()}\nNode: ${process.versions.node}\nChrome: ${process.versions.chrome}\nElectron: ${process.versions.electron}`
+            });
+          }
         },
       },
     ],
   },
 ];
+
+
+Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
 app.whenReady().then(criarJanela);
 

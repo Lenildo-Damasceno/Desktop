@@ -34,3 +34,6 @@ function limparCampos(limpar) {
   document.getElementById("numero").value = "VAMOS DE NOVO";
  document.getElementById('resultado').innerHTML = ""
 }
+
+
+

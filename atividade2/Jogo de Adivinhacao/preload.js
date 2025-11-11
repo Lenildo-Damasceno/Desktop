@@ -14,7 +14,7 @@ contextBridge.exposeInMainWorld('api', {
     enviarMsg: (msg) => ipcRenderer.send('envia-msg',msg),
     receberMsg: (msg) => ipcRenderer.on('devolver-msg', msg),
     dica1: dica,
-    verificar: verificarAdivinhacao
+    verificar: verificarAdivinhacao,
 })
 // Lógica do Jogo de Adivinhação
 function gerarNumeroAdivinhacao() {
