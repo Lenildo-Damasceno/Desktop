@@ -84,3 +84,26 @@ button {
 */
 .pad button { width:100%; height:52px; }
 
+/* histórico: painel ao lado do botão */
+.history-wrap { position: relative; display:inline-block; vertical-align:middle; }
+#history-btn { padding:8px 10px; border-radius:8px; border:1px solid #d0d6dd; background:#fff; cursor:pointer; }
+#historyPanel {
+  position: absolute;
+  left: calc(100% + 8px);
+  top: 0;
+  width: 240px;
+  max-height: 220px;
+  overflow:auto;
+  background:#ffffff;
+  border:1px solid #e6eef7;
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+  border-radius:8px;
+  padding:8px;
+  z-index:50;
+}
+#historyPanel.hidden { display: none; }
+.history-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.history-list { list-style:none; margin:0; padding:0; }
+.history-list li { padding:8px; margin-bottom:6px; background:#f6f9ff; border-radius:6px; cursor:pointer; }
+.history-list li:hover { background:#e9f2ff; }
+

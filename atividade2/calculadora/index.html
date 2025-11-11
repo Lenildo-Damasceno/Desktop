@@ -12,10 +12,21 @@
       <h1>Calculadora</h1>
 
       <input type="text" id="visor" value="0" readonly />
-         <div class="history-nav">
-        <button id="history-btn">Histórico</button>
+
+      <!-- histórico: botão + painel -->
+      <div class="history-nav">
+        <div class="history-wrap">
+          <button id="history-btn" aria-expanded="false">Histórico</button>
+          <div id="historyPanel" class="hidden" aria-hidden="true">
+            <div class="history-header">
+              <strong>Histórico</strong>
+              <button id="historyClear" title="Limpar">✖</button>
+            </div>
+            <ul id="historyList" class="history-list"></ul>
+          </div>
+        </div>
       </div>
-        <p id="history-paragraph" style="color:#fff; margin-top:10px; text-align:left; display:none; max-height:150px; overflow:auto;"></p>
+
       <div class="pad">
         <button id="limpar">C</button>
         <button class="num">7</button>
@@ -37,10 +48,10 @@
         <button id="igual">=</button>
         <button class="op">/</button>
         <button id="back">&#9003;</button>
-        
       </div>
-      <script src="renderer.js"></script>
     </div>
   </div>
+
+  <script src="renderer.js"></script>
 </body>
 </html>

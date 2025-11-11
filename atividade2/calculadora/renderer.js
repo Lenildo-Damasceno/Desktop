@@ -6,172 +6,151 @@ try {
     console.error('renderer: erro ao checar window.api', e);
 }
 
-const btnLimpar = document.getElementById('limpar');
-const btnVoltar = document.getElementById('back');
-const visor = document.getElementById('visor');
-const btnHistAnterior = document.getElementById('hist-anterior');
-const btnHistProximo = document.getElementById('hist-proximo');
-const btnToggleHistorico = document.getElementById('toggle-history');
-const paragrafoHistorico = document.getElementById('history-paragraph');
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const visor = document.getElementById('visor');
+        const btnLimpar = document.getElementById('limpar');
+        const btnBack = document.getElementById('back');
+        const btnIgual = document.getElementById('igual');
+        const buttons = document.querySelectorAll('.pad button');
+        const btnHistory = document.getElementById('history-btn');
+        const panel = document.getElementById('historyPanel');
+        const historyList = document.getElementById('historyList');
+        const historyClear = document.getElementById('historyClear');
 
-let operador;
-let navegacaoIndice = -1; // índice para navegar histórico
-
-if (btnLimpar) btnLimpar.addEventListener('click', () => { visor.value = ''; operador = undefined; });
-if (btnVoltar) btnVoltar.addEventListener('click', () => { visor.value = visor.value.slice(0, -1); });
-
-const botoes = document.querySelectorAll('.pad button');
-
-// Interação dos botões
-botoes.forEach((botao) => {
-    botao.addEventListener('click', async () => {
-        if (botao.classList.contains('num')) {
-            if (visor.value === '0') visor.value = '';
-            visor.value += botao.textContent.trim();
+        if (!visor) {
+            console.error('Visor não encontrado (id="visor").');
             return;
         }
 
-        if (botao.classList.contains('op')) {
-            if (!visor.value) return;
-            if (operador) return; // já existe operador
-            visor.value += botao.textContent;
-            operador = botao.textContent.trim();
-            return;
+        // histórico em localStorage (nome que não conflita com window.history)
+        const STORAGE_KEY = 'calc_historico_v1';
+        const historico = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+        let operador = null;
+
+        function saveHistory() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(historico));
         }
 
-        if (botao.id === 'igual') {
-            // calcula e adiciona ao histórico no main
-            console.log('renderer: = clicado, visor=', visor.value, 'operador=', operador);
-            // detectar operador digitado via teclado
-            if (!operador) {
-                const s = visor.value || '';
-                let start = 0;
-                if (s.startsWith('-')) start = 1;
-                for (let i = start; i < s.length; i++) {
-                    const ch = s[i];
-                    if ('+-*/'.includes(ch)) { operador = ch; break; }
-                }
-<<<<<<< HEAD
-            })
-        })
+        function setVisor(v) { visor.value = String(v); }
 
-        document.getElementById('history-btn').addEventListener('click', () => {
-          window.api.abrirHistorico();
-        });
-        
-=======
+        function appendDigit(d) {
+            if (visor.value === '0' || visor.value === 'Erro') visor.value = String(d);
+            else visor.value += String(d);
+        }
+
+        function addOperator(op) {
+            if (/[+\-*/]$/.test(visor.value)) {
+                visor.value = visor.value.slice(0, -1) + op;
+            } else {
+                visor.value += op;
             }
+            operador = op;
+        }
+
+        function calcular() {
             if (!operador) return;
-            const idx = visor.value.indexOf(operador);
-            if (idx === -1) return;
-            const esquerda = visor.value.substring(0, idx).trim();
-            const direita = visor.value.substring(idx + operador.length).trim();
-            if (esquerda === '' || direita === '') return;
-            const a = Number(esquerda);
-            const b = Number(direita);
-            let resultado;
+            const partes = visor.value.split(operador);
+            if (partes.length < 2) return;
+            const a = Number(partes[0]);
+            const b = Number(partes.slice(1).join(operador));
+            if (Number.isNaN(a) || Number.isNaN(b)) { setVisor('Erro'); return; }
+            let res;
             switch (operador) {
-                case '+': resultado = a + b; break;
-                case '-': resultado = a - b; break;
-                case '*': resultado = a * b; break;
-                case '/': resultado = (b === 0) ? 'Erro' : (a / b); break;
+                case '+': res = a + b; break;
+                case '-': res = a - b; break;
+                case '*': res = a * b; break;
+                case '/':
+                    if (b === 0) { setVisor('Erro'); return; }
+                    res = a / b; break;
                 default: return;
             }
+            if (typeof res === 'number' && !Number.isInteger(res)) res = Number(res.toFixed(10));
+            const texto = `${a} ${operador} ${b} = ${res}`;
+            setVisor(res);
+            historico.push({ expr: `${a} ${operador} ${b}`, result: String(res), text: texto, time: new Date().toLocaleString() });
+            saveHistory();
+            renderHistory();
+            operador = null;
+        }
 
-            const calculoCompleto = `${esquerda} ${operador} ${direita} = ${resultado}`;
-            try {
-                if (window.api && typeof window.api.adicionarHistorico === 'function') {
-                    await window.api.adicionarHistorico(calculoCompleto);
-                } else if (window.api && typeof window.api.addToHistory === 'function') {
-                    await window.api.addToHistory(calculoCompleto);
-                }
-            } catch (e) {
-                console.error('Erro ao adicionar histórico:', e);
+        function renderHistory() {
+            if (!historyList) return;
+            historyList.innerHTML = '';
+            for (let i = historico.length - 1; i >= 0; i--) {
+                const item = historico[i];
+                const li = document.createElement('li');
+                li.className = 'history-item';
+                li.textContent = item.text;
+                li.dataset.result = item.result;
+                li.title = item.time;
+                li.addEventListener('click', () => {
+                    setVisor(li.dataset.result);
+                    // fechar painel
+                    if (panel) { panel.classList.add('hidden'); btnHistory?.setAttribute('aria-expanded', 'false'); }
+                });
+                historyList.appendChild(li);
+            }
+        }
+
+        // eventos do painel de histórico
+        btnHistory?.addEventListener('click', () => {
+            if (!panel) return;
+            panel.classList.toggle('hidden');
+            const expanded = panel.classList.contains('hidden') ? 'false' : 'true';
+            btnHistory.setAttribute('aria-expanded', expanded);
+        });
+
+        historyClear?.addEventListener('click', () => {
+            historico.length = 0;
+            saveHistory();
+            renderHistory();
+        });
+
+        // eventos dos botões da calculadora
+        buttons.forEach(btn => {
+            const id = btn.id;
+            // ignorar controles do painel (caso dentro .pad)
+            if (id === 'history-btn' || id === 'historyClear') return;
+
+            if (btn.classList.contains('num')) {
+                btn.addEventListener('click', () => {
+                    appendDigit(btn.textContent.trim());
+                });
+                return;
             }
 
-            // atualizar parágrafo de histórico
-            try {
-                if (window.api && typeof window.api.obterHistorico === 'function') {
-                    const historico = await window.api.obterHistorico();
-                    if (paragrafoHistorico) paragrafoHistorico.innerHTML = (historico || []).map(x => String(x).replace(/</g, '&lt;')).join('<br>');
-                }
-            } catch (e) {
-                console.error('Erro ao obter histórico:', e);
+            if (btn.classList.contains('op')) {
+                btn.addEventListener('click', () => {
+                    addOperator(btn.textContent.trim());
+                });
+                return;
             }
 
-            visor.value = String(resultado);
-            operador = undefined;
-        }
-    });
-});
-
-// Toggle do parágrafo de histórico (se existir)
-if (btnToggleHistorico) {
-    btnToggleHistorico.addEventListener('click', async () => {
-        if (!paragrafoHistorico) return;
-        if (paragrafoHistorico.style.display === 'none' || paragrafoHistorico.style.display === '') {
-            try {
-                if (window.api && typeof window.api.obterHistorico === 'function') {
-                    const historico = await window.api.obterHistorico();
-                    paragrafoHistorico.innerHTML = (historico || []).map(x => String(x).replace(/</g, '&lt;')).join('<br>');
-                }
-            } catch (e) {
-                console.error('Erro ao obter histórico:', e);
-                paragrafoHistorico.innerText = 'Erro ao carregar histórico.';
+            if (id === 'limpar') {
+                btn.addEventListener('click', () => setVisor('0'));
+                return;
             }
-            paragrafoHistorico.style.display = 'block';
-        } else {
-            paragrafoHistorico.style.display = 'none';
-        }
-    });
-}
 
-// Função auxiliar para carregar histórico do main (com tratamento de erro)
-async function carregarHistorico() {
-    if (!window.api) return [];
-    try {
-        if (typeof window.api.obterHistorico === 'function') {
-            return await window.api.obterHistorico();
-        } else if (typeof window.api.getHistory === 'function') {
-            return await window.api.getHistory();
-        }
-    } catch (e) {
-        console.error('Erro ao carregar histórico (carregarHistorico):', e);
+            if (id === 'back') {
+                btn.addEventListener('click', () => {
+                    const next = visor.value.slice(0, -1) || '0';
+                    setVisor(next);
+                });
+                return;
+            }
+
+            if (id === 'igual') {
+                btn.addEventListener('click', calcular);
+                return;
+            }
+        });
+
+        // render inicial
+        renderHistory();
+        console.log('Renderer da calculadora carregado — histórico:', historico.length);
+    } catch (err) {
+        console.error('Erro no renderer.js:', err);
     }
-    return [];
-}
-
-// Navegação pelo histórico: ▲ anterior, ▼ próximo
-if (btnHistAnterior) {
-    btnHistAnterior.addEventListener('click', async () => {
-        const historico = await carregarHistorico();
-        if (!historico || historico.length === 0) return;
-        // se ainda não começamos a navegar, posicionamos após o último
-        if (navegacaoIndice === -1) navegacaoIndice = historico.length;
-        if (navegacaoIndice > 0) navegacaoIndice--;
-        const item = historico[navegacaoIndice];
-        if (!item) return;
-        // mostrar apenas a expressão antes do '=' para permitir recalcular
-        const expressao = String(item).split('=')[0].trim();
-        visor.value = expressao;
-    });
-}
-
-if (btnHistProximo) {
-    btnHistProximo.addEventListener('click', async () => {
-        const historico = await carregarHistorico();
-        if (!historico || historico.length === 0) return;
-        if (navegacaoIndice === -1) navegacaoIndice = historico.length;
-        if (navegacaoIndice < historico.length - 1) {
-            navegacaoIndice++;
-            const item = historico[navegacaoIndice];
-            const expressao = String(item).split('=')[0].trim();
-            visor.value = expressao;
-        } else {
-            // se já estava no final, limpa o visor
-            navegacaoIndice = historico.length;
-            visor.value = '';
-        }
-    });
-}
->>>>>>> c57b813bb9b8ac213758ad2e22ac799ab71c0d31
+});
