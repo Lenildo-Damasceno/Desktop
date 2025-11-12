@@ -27,9 +27,16 @@ function criarJanela() {
   janela.webContents.on("did-finish-load", () => {
     //evento disparado quando a janela termina de carregar
     janela.webContents.setZoomFactor(1.0);
-    
+
+    janela.webContents.on("context-menu",()=>{
+      Menu.buildFromTemplate(template).popup({ window: janela });
+    });
+
   });
+
 }
+
+let menubar = null;
 
 const template = [
   {
@@ -44,18 +51,17 @@ const template = [
     label: "Exibir",
     submenu: [
       {
-        label: "Zoom",
-        submenu: [
-          { label: "Aumentar", role: "zoomIn", accelerator: "CmdOrCtrl+=" },
-          { label: "Aumentar (alt)", role: "zoomIn", accelerator: "CmdOrCtrl+Shift=", visible: false },
-          { label: "Aumentar (Num +)", role: "zoomIn", accelerator: "CmdOrCtrl+numadd", visible: false },
-          { type: "separator" },
-          { label: "Diminuir", role: "zoomOut", accelerator: "CmdOrCtrl+-" },
-          { label: "Diminuir (Num -)", role: "zoomOut", accelerator: "CmdOrCtrl+numsub", visible: false },
-          { type: "separator" },
-          { label: "Resetar Zoom", role: "resetZoom" },
-        ],
-      },
+  label: "Zoom",
+  submenu: [
+    { label:"MAIS ZOOM" , role: "zoomIn" }, 
+
+    { label: "MENOS ZOO", role: "zoomOut" },
+
+    { type: "separator" },
+
+    { label: "VOLTAR TELA ORIGINAL ", role: "resetZoom" }
+  ]
+},
       { type: "separator" },
       { label: "Tela Cheia", role: "togglefullscreen" },
       { type: "separator" },
@@ -94,7 +100,8 @@ const template = [
             dialog.showMessageBox(janela, {
               type: "info",
               title: "Sobre o Jogo de Adivinhação",
-              message: `Versões:\nApp: ${app.getVersion()}\nNode: ${process.versions.node}\nChrome: ${process.versions.chrome}\nElectron: ${process.versions.electron}`
+              message: `Versões:\nApp: ${app.getVersion()}\nNode: ${process.versions.node}\nChrome: ${process.versions.chrome}\nElectron: ${process.versions.electron}`,
+              detail: ` https://github.com/electron/electron`
             });
           }
         },

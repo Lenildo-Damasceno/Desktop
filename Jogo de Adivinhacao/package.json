@@ -1,12 +1,16 @@
 {
   "name": "jogo-adivinhacao",
-  "version": "Alfa 1.0.0",
+  "version": "ALFA 1.0.0",
   "main": "main.js",
   "type": "module",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "dev": "electronmon ."
   },
   "dependencies": {
     "electron": "^39.0.0"
+  },
+  "devDependencies": {
+    "electronmon": "^2.0.4"
   }
 }
