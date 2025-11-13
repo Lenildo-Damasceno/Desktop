@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeTheme, ipcMain, Menu, dialog } from "electron";
+import { app, BrowserWindow, nativeTheme, ipcMain, Menu, dialog , Notification} from "electron";
 import { fileURLToPath } from "url";
 import path from "path";
 
@@ -113,28 +113,51 @@ const template = [
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
-app.whenReady().then(criarJanela);
+
+app.whenReady().then(() => {
+  criarJanela();
+janela.webContents.on("did-finish-load", () => {
+  dialog.showMessageBox(janela, {
+    type: 'info',
+    title: 'Bem-vindo',
+    message: 'Seja bem-vindo ao Jogo de Adivinhação!'
+  });
+  
+  Notification.requestPermission().then(permission => {
+    if (permission === "granted") {
+      new Notification({
+        title: 'Bem-vindo',
+        body: 'Seja bem-vindo ao Jogo de Adivinhação!',
+        silent: true
+      }).show();
+    }
+  });
+});
+});
+
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
 
-ipcMain.on("mudar-tema", () => {
-  if (nativeTheme.themeSource === "dark") {
-    nativeTheme.themeSource = "light";
-  } else {
-    nativeTheme.themeSource = "dark";
-  }
-});
 
-ipcMain.on("mudar-zoom", () => {
-  if (!janela) return;
-  const zoomAtual = janela.webContents.getZoomFactor();
-  janela.webContents.setZoomFactor(zoomAtual + 0.1);
-});
 
-ipcMain.on("mudar-zoom-", () => {
-  if (!janela) return;
-  const zoomAtual = janela.webContents.getZoomFactor();
-  janela.webContents.setZoomFactor(Math.max(0.1, zoomAtual - 0.1));
-});
+// ipcMain.on("mudar-tema", () => {
+//   if (nativeTheme.themeSource === "dark") {
+//     nativeTheme.themeSource = "light";
+//   } else {
+//     nativeTheme.themeSource = "dark";
+//   }
+// });
+
+// ipcMain.on("mudar-zoom", () => {
+//   if (!janela) return;
+//   const zoomAtual = janela.webContents.getZoomFactor();
+//   janela.webContents.setZoomFactor(zoomAtual + 0.1);
+// });
+
+// ipcMain.on("mudar-zoom-", () => {
+//   if (!janela) return;
+//   const zoomAtual = janela.webContents.getZoomFactor();
+//   janela.webContents.setZoomFactor(Math.max(0.1, zoomAtual - 0.1));
+// });
