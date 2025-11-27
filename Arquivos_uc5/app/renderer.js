@@ -28,3 +28,12 @@ window.salvarComoNota = function () {
       console.log('Arquivo salvo com sucesso!');
    }).catch(console.error);
 }
+
+novoBlocoDeNotas = function () {
+   texto.value = '';
+   document.getElementById('novo-bloco').innerText = 'Novo Bloco de Notas';
+}
+
+window.api.novoBlocoDeNotas(() => {
+   novoBlocoDeNotas();
+});

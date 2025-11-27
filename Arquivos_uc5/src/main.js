@@ -34,7 +34,8 @@ const template = [
   {
     label: "Arquivo",
     submenu: [
-        { label: "Novo Bloco de Notas", click: () => criarJanela() },
+       {label: "Novo", click: () => criarJanela() },
+        { label: "Novo Bloco de Notas", click: () => janela.webContents.send('novo-bloco-notas') },
         { type: "separator" },
         { label: "Abrir", click: () => abrirArquivo() },
         { label: "Salvar", click: () => salvarArquivo() },
@@ -184,6 +185,8 @@ function escreverArq (conteudo, destino = arquivoPadrao) {
         throw err;
     }
     }
+
+
 
 
 
