@@ -1,39 +1,30 @@
-import { contextBridge, ipcRenderer } from "electron";
+let texto = document.getElementById("texto")    
 
-contextBridge.exposeInMainWorld("api", {
-  salvar: (texto) => ipcRenderer.invoke('escrever-arquivo', texto),
-  abrir: () => ipcRenderer.invoke('ler-arquivo'),
-  salvarComoNota: (texto) => ipcRenderer.invoke('salvar-como-nota', texto)
-});
-
-let texto = document.getElementById('texto');
-
-// tornar funções globais usadas pelos botões em index.html
-window.abrirNota = function () {
-   window.api.abrir().then((conteudo) => {
-       texto.value = conteudo || '';
-   }).catch(console.error);
+function salvarArq(){
+    window.api.salvar(texto.value).then((caminho) =>{
+        document.getElementById("caminho").innerHTML = `Caminho: ${caminho}`
+    })    
 }
 
-window.salvarNota = function () {
-   window.api.salvar(texto.value).then((resultado) => {
-      if (resultado) document.getElementById('caminho').innerText = resultado;
-      console.log('Arquivo salvo com sucesso!');
-   }).catch(console.error);
+function abrirArq(){
+    window.api.abrir().then((conteudo) => {
+        texto.value = conteudo
+    })
 }
 
-window.salvarComoNota = function () {
-   window.api.salvarComoNota(texto.value).then((caminho) => {
-      if (caminho) document.getElementById('caminho').innerText = caminho;
-      console.log('Arquivo salvo com sucesso!');
-   }).catch(console.error);
+function salvarComoArq(){
+    window.api.salvarComo(texto.value).then((caminho) =>{
+        document.getElementById("caminho").innerHTML = `Caminho: ${caminho}`
+    })
 }
 
-novoBlocoDeNotas = function () {
-   texto.value = '';
-   document.getElementById('novo-bloco').innerText = 'Novo Bloco de Notas';
-}
-
-window.api.novoBlocoDeNotas(() => {
-   novoBlocoDeNotas();
+// registrar handlers para os eventos do menu (preload expõe api.onMenu)
+window.api.onMenu('menu-abrir', () => { console.log('menu-abrir recebido'); abrirArq(); });
+window.api.onMenu('menu-salvar', () => { console.log('menu-salvar recebido'); salvarArq(); });
+window.api.onMenu('menu-salvar-como', () => { console.log('menu-salvar-como recebido'); salvarComoArq(); });
+window.api.onMenu('novo-bloco-notas', () => {
+  const textoEl = document.getElementById('texto');
+  const caminhoEl = document.getElementById('caminho');
+  if (textoEl) textoEl.value = '';
+  if (caminhoEl) caminhoEl.innerText = '';
 });

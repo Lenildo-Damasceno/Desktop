@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeTheme, ipcMain, dialog , Menu} from 'electron';
+import { app, BrowserWindow, nativeTheme, ipcMain, dialog , Menu, Notification} from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
@@ -29,7 +29,69 @@ function criarJanela() {
   });
     
 }
-// let menubar = null;
+
+app.whenReady()
+    .then(() => {
+        criarJanela();
+    });
+
+ let caminhoArquivo = path.join(__dirname,'arquivo.txt')
+
+function escreverArq (conteudo){
+    try{
+        fs.writeFileSync(caminhoArquivo, conteudo, 'utf-8') // escreve no aquivo
+    }catch(err){
+        console.error(err)
+    }
+}
+// leitura de arquivo
+async function lerArq(){
+    let {canceled, filePaths} = await dialog.showOpenDialog({
+        title: 'Abrir caminhoArquivo',
+        defaultPath: 'caminhoArquivo.txt',
+        filters: [{name: 'Texto', extensions: ['txt', 'doc']}],
+        properties: ['openFile']
+    })
+    if(canceled){
+        return
+    }
+    caminhoArquivo = filePaths[0]
+    try {
+        let conteudo = fs.readFileSync(caminhoArquivo, 'utf-8')
+        return conteudo
+    } catch (err) {
+        console.error(err)
+    }  
+}
+
+  
+
+
+ipcMain.handle('salvar-arq', (event, texto) =>{
+  
+    escreverArq(texto)    
+    return caminhoArquivo
+})
+
+ipcMain.handle('abrir-arq', (event) =>{
+    let conteudo = lerArq()
+    return conteudo
+})
+
+ipcMain.handle('salvarComo-arq', (event, texto) => {
+   dialog.showSaveDialog({
+        title: 'Salvar como',
+        defaultPath: 'caminhoArquivo',
+        filters: [{name: 'Texto', extensions: ['txt', 'doc']}]
+    }).then((resultado) => {
+        if(resultado.canceled) return
+        caminhoArquivo = resultado.filePath
+        escreverArq(texto)        
+    })
+    return caminhoArquivo     
+})
+
+   // let menubar = null;
 const template = [
   {
     label: "Arquivo",
@@ -37,9 +99,9 @@ const template = [
        {label: "Novo", click: () => criarJanela() },
         { label: "Novo Bloco de Notas", click: () => janela.webContents.send('novo-bloco-notas') },
         { type: "separator" },
-        { label: "Abrir", click: () => abrirArquivo() },
-        { label: "Salvar", click: () => salvarArquivo() },
-        { label: "Salvar Como", click: () => salvarComoNota() },
+        { label: "Abrir", click: () => { if (janela) janela.webContents.send('menu-abrir'); } },
+        { label: "Salvar", click: () => { if (janela) janela.webContents.send('menu-salvar'); } },
+        { label: "Salvar Como", click: () => { if (janela) janela.webContents.send('menu-salvar-como'); } },
         { type: "separator" },
         { label: "Sair", role: "quit" },
 
@@ -49,7 +111,6 @@ const template = [
  {
     label: "Editar",
     submenu: [
-      { label: "Novo Bloco de Notas", click: () => criarJanela() },
       { type: "separator" },
       { label: "Desfazer", role: "undo" },
       { label: "Refazer", role: "redo" },
@@ -104,15 +165,6 @@ const template = [
       },
     ],
   },
- 
-  {
-    label: "Navegação",
-    submenu: [
-      { label:"⬅️" , click: () => janela.loadFile('login.html') },
-      { label: "➡️", click: () => janela.loadFile('cadastro.html') },
-
-  ]
-},
 
   {
     label: "Ajuda",
@@ -123,7 +175,7 @@ const template = [
           if (janela) {
             dialog.showMessageBox(janela, {
               type: "info",
-              title: "Tela de Login",
+              title: "BLOCO DE NOTAS",
               message: `Projeto Tela de Login Versões: 
                \nApp: ${app.getVersion()}\nNode: ${process.versions.node}\nChrome: ${process.versions.chrome}\nElectron: ${process.versions.electron}`,
 
@@ -138,92 +190,24 @@ const template = [
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
-app.whenReady()
-    .then(() => {
-        criarJanela();
-    });
+app.whenReady().then(() => { 
+    new Notification({
+        title: 'Electron',
+        body: 'Electron inicializado...',
+        silent: false
+    }).show()
+    dialog.showMessageBox({
+        title: 'Electron',
+        type: 'info',
+        message: 'Electron inicializado...'
+    })
+    criarJanela()
 
-// escrita de arquivo
-const arquivoPadrao = path.join(__dirname, 'arquivo.txt');
+})
 
-
-function escreverArq (conteudo, destino = arquivoPadrao) {
- try {
-        if (typeof conteudo === 'undefined') {
-            console.log('escreverArq: conteúdo indefinido, nada escrito.');
-            return;
-        }
-        fs.writeFileSync(destino, String(conteudo), 'utf-8');
-        console.log('Arquivo escrito com sucesso em', destino);
-
-    } catch (err) {
-        console.log('Erro ao escrever o arquivo:', err);
-        throw err;
-    }
-}
-// leitura de arquivo
-  async function lerArq() {
-    let resultado = await dialog.showOpenDialog({
-        title: 'abrir arquivo',
-        defaultPath: arquivoPadrao,
-        filters: [
-            { name: 'Text Files', extensions: ['txt', 'doc'] }
-        ],
-        properties: ['openFile']
-    });
-    if (resultado.canceled) {
-        console.log('Abertura de arquivo cancelada');
-        return null;
-    }
-    const selecionado = resultado.filePaths[0];
-    try{
-        let conteudo = fs.readFileSync(selecionado, 'utf-8');
-        console.log('Conteúdo do arquivo:', selecionado);
-        return conteudo;
-    } catch (err) {
-        console.log('Erro ao ler o arquivo:', err);
-        throw err;
-    }
-    }
-
-
-
-
-
-
-
-// IPC handlers 
-//ler
-ipcMain.handle('ler-arquivo', async (event) => {
-    try {
-        const conteudo = await lerArq();
-        return conteudo;
-    } catch (err) {
-        console.log('Erro ao ler o arquivo:', err);
-        throw err;
-    }
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
 });
-//escrever
-ipcMain.handle('escrever-arquivo', async (event, texto, destino) => {
-    try {
-        escreverArq(texto, destino);
-        return true;
-    } catch (err) {
-        console.log('Erro ao escrever o arquivo:', err);
-        throw err;
-    }
-});
-//salvar como nota
-ipcMain.handle('salvar-como-nota', async (event, texto) => {
-    try {
-        salvarComoNota(texto);
-        return true;
-    } catch (err) {
-        console.log('Erro ao salvar como Nota:', err);
-        throw err;
-    }
-});
-
-
-
 
