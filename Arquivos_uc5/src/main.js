@@ -13,12 +13,14 @@ function criarJanela() {
         title: 'Meu App Electron',
         width: 800,
         height: 800,
+        icon: path.join(__dirname, '..', 'app', 'icon.png'),
         webPreferences: {
             contextIsolation: true,
             nodeIntegration: false,
             devTools: true,
             preload: path.join(__dirname, 'preload.js'),
             sandbox: false,
+          
         }
     });
 
