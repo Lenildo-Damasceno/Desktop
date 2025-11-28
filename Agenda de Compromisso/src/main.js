@@ -37,61 +37,67 @@ app.whenReady()
         criarJanela();
     });
 
- let caminhoArquivo = path.join(__dirname,'arquivo.json')
+let caminhoArquivo = path.join(__dirname,'arquivo.json');
 
 function escreverArq (conteudo){
     try{
-        fs.writeFileSync(caminhoArquivo, conteudo, 'utf-8') // escreve no aquivo
+        fs.writeFileSync(caminhoArquivo, conteudo, 'utf-8')
     }catch(err){
         console.error(err)
     }
 }
-// leitura de arquivo
-async function lerArq(){
-    let {canceled, filePaths} = await dialog.showOpenDialog({
-        title: 'Abrir caminhoArquivo',
-        defaultPath: 'caminhoArquivo.txt',
-        filters: [{name: 'Texto', extensions: ['txt', 'doc']}],
-        properties: ['openFile']
-    })
-    if(canceled){
-        return
+
+// Handlers para criar e consultar compromissos
+ipcMain.handle('novo', async (event, compromisso) => {
+  console.log('[main] novo chamado', compromisso);
+  caminhoArquivo = path.join(__dirname, 'arquivo.json');
+  if (!compromisso || typeof compromisso !== 'object') {
+    throw new Error('Dados de compromisso inválidos');
+  }
+  try {
+    let arr = [];
+    if (fs.existsSync(caminhoArquivo)) {
+      const txt = fs.readFileSync(caminhoArquivo, 'utf-8');
+      if (txt) {
+        try { arr = JSON.parse(txt); } catch (e) { arr = []; }
+      }
     }
-    caminhoArquivo = filePaths[0]
-    try {
-        let conteudo = fs.readFileSync(caminhoArquivo, 'utf-8')
-        return conteudo
-    } catch (err) {
-        console.error(err)
-    }  
-}
+    if (!Array.isArray(arr)) arr = [];
+    const novo = Object.assign({ id: Date.now() }, compromisso);
+    arr.push(novo);
+    fs.writeFileSync(caminhoArquivo, JSON.stringify(arr, null, 2), 'utf-8');
+    return arr;
+  } catch (err) {
+    console.error('Erro ao gravar compromisso:', err);
+    throw err;
+  }
+});
+
+ipcMain.handle('consultar', async (event) => {
+  console.log('[main] consultar chamado');
+  try {
+    if (fs.existsSync(caminhoArquivo)) {
+      const txt = fs.readFileSync(caminhoArquivo, 'utf-8');
+      if (!txt) return [];
+      try {
+        const arr = JSON.parse(txt);
+        return Array.isArray(arr) ? arr : [];
+      } catch (e) {
+        return [];
+      }
+    }
+    return [];
+  } catch (err) {
+    console.error('Erro ao ler arquivo:', err);
+    throw err;
+  }
+});
+
+
 
   
 
 
-ipcMain.handle('salvar-arq', (event, texto) =>{
-  
-    escreverArq(texto)    
-    return caminhoArquivo
-})
-
-ipcMain.handle('abrir-arq', (event) =>{
-    let conteudo = lerArq()
-    return conteudo
-})
-
-ipcMain.handle('salvarComo-arq', (event, texto) => {
-   dialog.showSaveDialog({
-        title: 'Salvar como',
-        defaultPath: 'caminhoArquivo',
-        filters: [{name: 'Texto', extensions: ['txt', 'doc']}]
-    }).then((resultado) => {
-        if(resultado.canceled) return
-        caminhoArquivo = resultado.filePath
-        escreverArq(texto)        
-    })
-    return caminhoArquivo     
-})
 
    // let menubar = null;
 const template = [

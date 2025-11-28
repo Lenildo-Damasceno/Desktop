@@ -16,5 +16,8 @@
     "url": "https://github.com/Lenildo-Damasceno/Desktop/issues"
   },
   "homepage": "https://github.com/Lenildo-Damasceno/Desktop#readme",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "electrom": "^34.0.2"
+  }
 }
