@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeTheme, ipcMain, dialog , Menu, Notification} from 'electron';
+import { app, BrowserWindow, nativeTheme, ipcMain, dialog, Menu, Notification } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
@@ -27,85 +27,16 @@ function criarJanela() {
     const indexPath = path.join(__dirname, '..', 'app', 'index.html');
     janela.loadFile(indexPath);
     janela.webContents.on("context-menu", () => {
-    Menu.buildFromTemplate(template).popup({ window: janela });
-  });
+      if (template && janela) Menu.buildFromTemplate(template).popup({ window: janela });
+    });
     
 }
-
-app.whenReady()
-    .then(() => {
-        criarJanela();
-    });
-
-let caminhoArquivo = path.join(__dirname,'arquivo.json');
-
-function escreverArq (conteudo){
-    try{
-        fs.writeFileSync(caminhoArquivo, conteudo, 'utf-8')
-    }catch(err){
-        console.error(err)
-    }
-}
-
-// Handlers para criar e consultar compromissos
-ipcMain.handle('novo', async (event, compromisso) => {
-  console.log('[main] novo chamado', compromisso);
-  caminhoArquivo = path.join(__dirname, 'arquivo.json');
-  if (!compromisso || typeof compromisso !== 'object') {
-    throw new Error('Dados de compromisso inválidos');
-  }
-  try {
-    let arr = [];
-    if (fs.existsSync(caminhoArquivo)) {
-      const txt = fs.readFileSync(caminhoArquivo, 'utf-8');
-      if (txt) {
-        try { arr = JSON.parse(txt); } catch (e) { arr = []; }
-      }
-    }
-    if (!Array.isArray(arr)) arr = [];
-    const novo = Object.assign({ id: Date.now() }, compromisso);
-    arr.push(novo);
-    fs.writeFileSync(caminhoArquivo, JSON.stringify(arr, null, 2), 'utf-8');
-    return arr;
-  } catch (err) {
-    console.error('Erro ao gravar compromisso:', err);
-    throw err;
-  }
-});
-
-ipcMain.handle('consultar', async (event) => {
-  console.log('[main] consultar chamado');
-  try {
-    if (fs.existsSync(caminhoArquivo)) {
-      const txt = fs.readFileSync(caminhoArquivo, 'utf-8');
-      if (!txt) return [];
-      try {
-        const arr = JSON.parse(txt);
-        return Array.isArray(arr) ? arr : [];
-      } catch (e) {
-        return [];
-      }
-    }
-    return [];
-  } catch (err) {
-    console.error('Erro ao ler arquivo:', err);
-    throw err;
-  }
-});
-
-
-
-  
-
-
-
-   // let menubar = null;
 const template = [
   {
     label: "Arquivo",
     submenu: [
        {label: "Novo", click: () => criarJanela() },
-        { label: "Novo Bloco de Notas", click: () => janela.webContents.send('novo-bloco-notas') },
+        { label: "Novo Bloco de Notas", click: () => janela && janela.webContents.send('novo-bloco-notas') },
         { type: "separator" },
         { label: "Abrir", click: () => { if (janela) janela.webContents.send('menu-abrir'); } },
         { label: "Salvar", click: () => { if (janela) janela.webContents.send('menu-salvar'); } },
@@ -195,27 +126,57 @@ const template = [
   },
 ];
 
+// set menu and initialize app in a single whenReady
+app.whenReady().then(() => {
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+    criarJanela();
 
-Menu.setApplicationMenu(Menu.buildFromTemplate(template));
-
-app.whenReady().then(() => { 
     new Notification({
         title: 'Electron',
         body: 'Electron inicializado...',
         silent: false
-    }).show()
-    dialog.showMessageBox({
-        title: 'Electron',
-        type: 'info',
-        message: 'Electron inicializado...'
-    })
+    }).show();
 
-
-})
+    if (janela) {
+      dialog.showMessageBox(janela, {
+          title: 'Electron',
+          type: 'info',
+          message: 'Electron inicializado...'
+      });
+    } else {
+      dialog.showMessageBox({
+          title: 'Electron',
+          type: 'info',
+          message: 'Electron inicializado...'
+      });
+    }
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
+
+
+
+let compromissosPath = path.join(__dirname, 'compromissos.json');
+
+let compromissos = []
+
+function salvarCompromissos(compromissos) {
+  try {
+    fs.writeFileSync(compromissosPath, JSON.stringify(compromissos, null, 2),"utf-8");
+  } catch (err) {
+    console.error('Erro ao salvar compromissos:', err);
+  }
+}
+
+
+ipcMain.handle('salvarCompromisso', ( compromisso) => {
+  compromissos.push(compromisso);
+  salvarCompromissos(compromissos);
+  console.log(compromisso)
+    return compromisso
+})
 

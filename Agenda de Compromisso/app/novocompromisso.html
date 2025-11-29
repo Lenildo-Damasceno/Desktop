@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Compromisso</title>
+    <script src="./renderer.js" defer></script>
+</head>
+<body>
+    <h1>Criar Novo Compromisso</h1>
+    <form id="form-novocompromisso">
+        <label for="titulo">Título:</label><br>
+        <input type="text" id="titulo" name="titulo"><br><br>
+        <label for="data">Data:</label><br>
+        <input type="date" id="data" name="data"><br><br>
+        <label for="hora">Hora:</label><br>
+        <input type="time" id="hora" name="hora"><br><br>
+        <label for="descricao">Descrição:</label><br>
+        <textarea id="descricao" name="descricao" rows="4" cols="50"></textarea><br><br>
+        <input type="submit" id="btn-salvar-compromisso" value="Salvar Compromisso">
+    </form>
+</body>
+</html>
