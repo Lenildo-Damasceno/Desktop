@@ -4,14 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bloco de Notas</title>
+    <style>
+      :root{--bg:#f5f7fb;--accent:#4aa0ff;--btn:#2b7be4}
+      body{font-family:Inter, Arial, Helvetica, sans-serif;background:var(--bg);margin:0;padding:24px;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+      h1{width:100%;max-width:900px;text-align:center;background:linear-gradient(90deg,var(--accent),#69b3ff);color:#fff;padding:18px 20px;margin:0 0 20px;border-radius:8px;box-shadow:0 3px 8px rgba(0,0,0,0.08)}
+      .controls{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:16px 0}
+      input[type="button"]{border:0;padding:12px 18px;border-radius:8px;background:var(--btn);color:#fff;cursor:pointer;font-weight:600;box-shadow:0 2px 6px rgba(43,123,228,0.18);transition:transform .08s ease,filter .12s ease}
+      input[type="button"]:hover{filter:brightness(0.95);transform:translateY(-1px)}
+      input[type="button"].secondary{background:#6c757d}
+      @media (max-width:480px){.controls{flex-direction:column;width:100%;align-items:center} input[type="button"]{width:90%;max-width:360px}}
+    </style>
     <script src="renderer.js" defer></script>
 </head>
 <body>
-    <h1 style="text-align: center; background-color: lightblue;">AGENDA DE COMPROMISSO</h1>
-        <input type="button" value="CONSULTAR COMPROMISSO 🔍 " id="consultarCompromissos">
-        <input type="button" value="NOVO COMPROMISSO  ➕ " id="novo" onclick="location.href='novocompromisso.html'">
+    <h1 style="text-align: center;">AGENDA DE COMPROMISSO</h1>
+    <div class="controls">
+        <input type="button" value="CONSULTAR COMPROMISSO 🔍" id="consultarCompromissos">
+        <input type="button" value="NOVO COMPROMISSO ➕" id="novo" class="secondary" onclick="location.href='novocompromisso.html'">
+        
+    </div>
 
-        <br>
+    <br>
 
 </body>
 </html>

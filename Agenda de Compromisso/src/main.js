@@ -31,36 +31,83 @@ function criarJanela() {
     });
     
 }
+
+// Caminho do arquivo JSON (arquivo no diretório src)
+const compromissosPath = path.join(__dirname, 'compromissos.json');
+console.log('compromissosPath:', compromissosPath);
+
+function lerCompromissos() {
+  try {
+    if (fs.existsSync(compromissosPath)) {
+      const data = fs.readFileSync(compromissosPath, 'utf8');
+      return JSON.parse(data);
+    }
+    return [];
+  } catch (err) {
+    return [];
+  }
+}
+
+let compromissos = lerCompromissos();
+
+function salvarCompromissos(compromissosList) {
+  try {
+    fs.writeFileSync(compromissosPath, JSON.stringify(compromissosList, null, 2), 'utf8');
+  } catch (err) {
+    // intentionally silent per user preference
+  }
+}
+
+// Handlers IPC registrados antes de criar a janela
+ipcMain.handle('salvarCompromisso', async (event, compromisso) => {
+  if (!compromisso || !compromisso.titulo || !compromisso.titulo.trim()) {
+    return { success: false, message: 'Título obrigatório.' };
+  }
+
+  compromisso.titulo = compromisso.titulo.trim();
+  compromisso.data = (compromisso.data || '').trim();
+  compromisso.hora = (compromisso.hora || '').trim();
+  compromisso.descricao = (compromisso.descricao || '').trim();
+
+  compromisso.id = compromisso.id || Date.now();
+  const idx = compromissos.findIndex(c => c.id === compromisso.id);
+  if (idx >= 0) compromissos[idx] = compromisso; else compromissos.push(compromisso);
+
+  salvarCompromissos(compromissos);
+  return { success: true, message: 'Compromisso salvo com sucesso!', compromisso };
+});
+
+ipcMain.handle('consultarCompromissos', async () => {
+  return JSON.parse(JSON.stringify(compromissos || []));
+});
+
+
+
+ipcMain.handle('removerCompromisso', async (event, id) => {
+  const before = compromissos.length;
+  compromissos = compromissos.filter(c => c.id !== id);
+  if (compromissos.length !== before) {
+    salvarCompromissos(compromissos);
+    return { success: true };
+  }
+  return { success: false, message: 'Id não encontrado.' };
+});
+
 const template = [
-  {
+ {
     label: "Arquivo",
     submenu: [
-       {label: "Novo", click: () => criarJanela() },
-        { label: "Novo Bloco de Notas", click: () => janela && janela.webContents.send('novo-bloco-notas') },
-        { type: "separator" },
-        { label: "Abrir", click: () => { if (janela) janela.webContents.send('menu-abrir'); } },
-        { label: "Salvar", click: () => { if (janela) janela.webContents.send('menu-salvar'); } },
-        { label: "Salvar Como", click: () => { if (janela) janela.webContents.send('menu-salvar-como'); } },
-        { type: "separator" },
+        {
+            label: "Novo compromisso",
+            onclick: "location.href='novocompromisso.html'" 
+        }, 
+        { 
+            type: "separator" 
+        },
         { label: "Sair", role: "quit" },
-
     ],
-  },
+},
 
- {
-    label: "Editar",
-    submenu: [
-      { type: "separator" },
-      { label: "Desfazer", role: "undo" },
-      { label: "Refazer", role: "redo" },
-      { label: "Recortar", role: "cut" },
-      { label: "Copiar", role: "copy" },
-      { label: "Colar", role: "paste" },
-      { label: "Limpar", role: "delete" },
-      { label: "Selecionar Tudo", role: "selectAll" },
-    ],
-  },
- 
   {
     label: "Exibir",
     submenu: [
@@ -115,8 +162,7 @@ const template = [
             dialog.showMessageBox(janela, {
               type: "info",
               title: "",
-              message: `Projeto Tela de Login Versões: 
-               \nApp: ${app.getVersion()}\nNode: ${process.versions.node}\nChrome: ${process.versions.chrome}\nElectron: ${process.versions.electron}`,
+              message: `AGENDA DE COMPROMISSO\nVersão: ${app.getVersion()}\nNode: ${process.versions.node}\nChrome: ${process.versions.chrome}\nElectron: ${process.versions.electron}`,
 
             });
           }
@@ -126,57 +172,60 @@ const template = [
   },
 ];
 
-// set menu and initialize app in a single whenReady
+
+function verificarCompromissos() {
+    const hoje = new Date();
+ 
+    const hojeString = `${hoje.getFullYear()}-${(hoje.getMonth() + 1).toString().padStart(2, '0')}-${hoje.getDate().toString().padStart(2, '0')}`;
+
+    const compromissosDeHoje = compromissos.filter(c => {
+      
+        return c.data === hojeString;
+    });
+
+    if (compromissosDeHoje.length > 0) {
+        let mensagem = `Você tem ${compromissosDeHoje.length} compromisso(s) para **hoje**, ${hojeString}:\n\n`;
+
+        compromissosDeHoje.forEach(c => {
+            mensagem += `**${c.titulo}** às ${c.hora || 'Hora não especificada'}\n`;
+        });
+
+      
+        if (janela) {
+            dialog.showMessageBox(janela, {
+                type: 'warning',
+                title: 'Lembrete de Compromisso',
+                message: mensagem,
+                detail: 'Não se esqueça dos seus compromissos agendados para este dia!',
+            });
+        }
+    }
+}
+
+
 app.whenReady().then(() => {
     Menu.setApplicationMenu(Menu.buildFromTemplate(template));
     criarJanela();
 
+    verificarCompromissos(); 
+    
     new Notification({
         title: 'Electron',
         body: 'Electron inicializado...',
         silent: false
     }).show();
 
-    if (janela) {
-      dialog.showMessageBox(janela, {
-          title: 'Electron',
-          type: 'info',
-          message: 'Electron inicializado...'
-      });
-    } else {
-      dialog.showMessageBox({
-          title: 'Electron',
-          type: 'info',
-          message: 'Electron inicializado...'
-      });
+    // if (janela) {
+    //   dialog.showMessageBox(janela, {
+    //       title: 'Electron',
+    //       type: 'info',
+    //       message: 'Electron inicializado...'
+    //   });
+    // } else {
+    //   dialog.showMessageBox({
+    //       title: 'Electron',
+    //       type: 'info',
+    //       message: 'Electron inicializado...'
+    //   });
     }
-});
-
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
-
-
-
-let compromissosPath = path.join(__dirname, 'compromissos.json');
-
-let compromissos = []
-
-function salvarCompromissos(compromissos) {
-  try {
-    fs.writeFileSync(compromissosPath, JSON.stringify(compromissos, null, 2),"utf-8");
-  } catch (err) {
-    console.error('Erro ao salvar compromissos:', err);
-  }
-}
-
-
-ipcMain.handle('salvarCompromisso', ( compromisso) => {
-  compromissos.push(compromisso);
-  salvarCompromissos(compromissos);
-  console.log(compromisso)
-    return compromisso
-})
-
+  )
